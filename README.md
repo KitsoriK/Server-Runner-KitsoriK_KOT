@@ -5,7 +5,7 @@ Go to the Discord Developer Portal.
 Create a new application.
 Open the Bot tab and create a bot.
 Copy your bot token (click Reset Token if needed).
-Open OAuth2 → URL Generator.
+Open OAuth2 - URL Generator.
 Select the following scopes:
 bot
 applications.commands
@@ -17,17 +17,17 @@ Example:
 
     C:\servers\
 ├── Server1\
-│   └── start.bat
+│   └── Start.bat
 
     ├── Server2\
-│   └── start.bat
+│   └── Start.bat
 
     └── Server3\
-    └── start.bat
+    └── Start.bat
 
     For every server:
 
-    Rename the startup script to start.bat (if it isn't already).
+    Rename the startup script to Start.bat (if it isn't already).
 
     Open server.properties and configure RCON:
     enable-rcon=true
@@ -39,7 +39,7 @@ Example:
     Open config_file.json and edit the following values:
     TOKEN - Your Discord bot token.
     You can get it from the Bot page in the Discord Developer Portal.
-    
+
     OWNER_ID - Your Discord user ID.
     Enable Developer Mode in Discord, click your profile, and choose Copy User ID.
 
