@@ -30,6 +30,7 @@ RCON_PASSWORD = settings["RCON_PASSWORD"]
 RCON_PORT = settings["RCON_PORT"]
 server_path = settings["server_path"]
 standard_server = settings["standard_server"]
+russian = settings["russian"]
 
 def load_users(file):
     if not os.path.exists(file):
@@ -77,13 +78,17 @@ def is_any_server_running():
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-    print(f"Бот запущен как {bot.user}")
+    print(f"Bot started like {bot.user}")
 
-@bot.tree.command(name="run", description="Запустить сервер")
+@bot.tree.command(name="run", description="Start a server")
 async def run(interaction: discord.Interaction, server_name: str = ""):
     if not is_allowed(interaction.user.id):
-        await interaction.response.send_message("Нет доступа", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Нет доступа", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Access denied", ephemeral=True)
+            return
 
     if server_name:
         bat_file = rf"{server_path}/{server_name}/Start.bat"
@@ -91,12 +96,20 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
         bat_file = rf"{server_path}/{standard_server}/Start.bat"
 
     if not os.path.exists(bat_file):
-        await interaction.response.send_message(f"❌ Неизвестный сервер `{server_name}`", ephemeral=False)
-        return
+        if russian:
+            await interaction.response.send_message(f"❌ Неизвестный сервер `{server_name}`", ephemeral=False)
+            return
+        else:
+            await interaction.response.send_message(f"❌ Unknown server `{server_name}`", ephemeral=False)
+            return
 
     if is_any_server_running():
-        await interaction.response.send_message("❌ Уже запущен этот или другой сервер", ephemeral=False)
-        return
+        if russian:
+            await interaction.response.send_message("❌ Уже запущен этот или другой сервер", ephemeral=False)
+            return
+        else:
+            await interaction.response.send_message("❌ Some server is already running", ephemeral=False)
+            return
 
     try:
         subprocess.Popen(
@@ -105,151 +118,227 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
             creationflags=subprocess.CREATE_NEW_CONSOLE
         )
 
-        if server_name:
-            await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
+        if russian:
+            if server_name:
+                await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
+            else:
+                await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=False)
         else:
-            await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=False)
+            if server_name:
+                await interaction.response.send_message(f"🟢 Started server `{server_name}`", ephemeral=False)
+            else:
+                await interaction.response.send_message(f"🟢 Started server `{standard_server}`", ephemeral=False)
 
     except Exception as e:
-        await interaction.response.send_message(f"Ошибка запуска: {e}", ephemeral=False)
+        if russian:
+            await interaction.response.send_message(f"Ошибка запуска: {e}", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"Starting error: {e}", ephemeral=False)
 
-@bot.tree.command(name="status", description="Проверить статус сервера")
+@bot.tree.command(name="status", description="Check server status")
 async def status_command(interaction: discord.Interaction):
-    if is_any_server_running():
-        await interaction.response.send_message("🟢 Какой-то сервер работает", ephemeral=True)
+    if russian:
+        if is_any_server_running():
+            await interaction.response.send_message("🟢 Какой-то сервер работает", ephemeral=True)
+        else:
+            await interaction.response.send_message("🔴 Все сервера остановлены", ephemeral=True)
     else:
-        await interaction.response.send_message("🔴 Все сервера остановлены", ephemeral=True)
+        if is_any_server_running():
+            await interaction.response.send_message("🟢 Some server is running", ephemeral=True)
+        else:
+            await interaction.response.send_message("🔴 Every server is running", ephemeral=True)
 
 
-@bot.tree.command(name="stop", description="Остановить сервер")
+@bot.tree.command(name="stop", description="Stop a server")
 async def stop_command(interaction: discord.Interaction):
     if not is_admin(interaction.user.id):
-        await interaction.response.send_message("Только админ может останавливать", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Только админ может останавливать", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Only admin can stop", ephemeral=True)
+            return
 
-    await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
+    if russian:
+        await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
+    else:
+        await interaction.response.send_message("❌ Stopping!!!", ephemeral=False)
 
     with MCRcon(RCON_HOST, RCON_PASSWORD, RCON_PORT=RCON_PORT) as mcr:
         mcr.command("stop")
 
 
-@bot.tree.command(name="add", description="Добавить пользователя")
+@bot.tree.command(name="add", description="Add user")
 async def add_command(interaction: discord.Interaction, user: discord.User):
 
     if not is_admin(interaction.user.id):
-        await interaction.response.send_message("Только админ может добавлять", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Только админ может добавлять", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Only admin can add", ephemeral=True)
+            return
 
     if user.id in allowed_users:
-        await interaction.response.send_message("Уже есть в списке", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Already in the list", ephemeral=True)
+            return
 
     allowed_users.append(user.id)
     save_users(allowed_users, ALLOWED_FILE)
 
-    await interaction.response.send_message(f"<@{user.id}> добавлен", ephemeral=False)
+    if russian:
+        await interaction.response.send_message(f"<@{user.id}> добавлен", ephemeral=False)
+    else:
+        await interaction.response.send_message(f"<@{user.id}> added", ephemeral=False)
 
 
-@bot.tree.command(name="remove", description="Удалить пользователя")
+@bot.tree.command(name="remove", description="Remove user")
 async def remove_command(interaction: discord.Interaction, user: discord.User):
 
-    if not is_owner(interaction.user.id):
-        await interaction.response.send_message("Только владелец может удалять", ephemeral=True)
-        return
+    if not is_admin(interaction.user.id):
+        if russian:
+            await interaction.response.send_message("Только админ может удалять", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Only admin can remove", ephemeral=True)
+            return
 
     if user.id not in allowed_users:
-        await interaction.response.send_message("Его нет в списке", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Его нет в списке", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Not in the list", ephemeral=True)
+            return
 
     allowed_users.remove(user.id)
     save_users(allowed_users, ALLOWED_FILE)
 
-    await interaction.response.send_message(f"<@{user.id}> удалён", ephemeral=False)
+    if russian:
+        await interaction.response.send_message(f"<@{user.id}> удалён", ephemeral=False)
+    else:
+        await interaction.response.send_message(f"<@{user.id}> removed", ephemeral=False)
 
 
-@bot.tree.command(name="list", description="Показать разрешённых пользователей")
+@bot.tree.command(name="list", description="Show allowed users")
 async def list_command(interaction: discord.Interaction):
 
     if not is_allowed(interaction.user.id):
-        await interaction.response.send_message("Нет доступа", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Нет доступа", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Access denied", ephemeral=True)
+            return
 
     if not allowed_users:
-        await interaction.response.send_message(
-            "Список пуст\nКоманды админа: /add, /remove",
-            ephemeral=True
-        )
-        return
+        if russian:
+            await interaction.response.send_message("Список пуст", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("List is empty", ephemeral=True)
+            return
 
     users = "\n".join([f"<@{uid}>" for uid in allowed_users])
 
-    await interaction.response.send_message(
-        f"Разрешённые:\n{users}",
-        ephemeral=True
-    )
+    if russian:
+        await interaction.response.send_message(f"Разрешённые:\n{users}", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"Allowed:\n{users}", ephemeral=True)
 
-@bot.tree.command(name="addadmin", description="Добавить администратора")
+@bot.tree.command(name="addadmin", description="Add admin")
 async def addadmin_command(interaction: discord.Interaction, user: discord.User):
 
     if not is_owner(interaction.user.id):
-        await interaction.response.send_message("Только владелец может добавлять админов", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Только владелец может добавлять админов", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Only owner can add admins", ephemeral=True)
+            return
 
     if user.id in admin_users:
-        await interaction.response.send_message("Уже есть в списке", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Already in the list", ephemeral=True)
+            return
 
     admin_users.append(user.id)
     save_users(admin_users, ADMIN_FILE)
 
-    await interaction.response.send_message(f"<@{user.id}> добавлен в админы", ephemeral=False)
+    if russian:
+        await interaction.response.send_message(f"<@{user.id}> добавлен в админы", ephemeral=False)
+    else:
+        await interaction.response.send_message(f"<@{user.id}> was added to admins", ephemeral=False)
 
 
-@bot.tree.command(name="removeadmin", description="Удалить администратора")
+@bot.tree.command(name="removeadmin", description="Remove admin")
 async def removeadmin_command(interaction: discord.Interaction, user: discord.User):
 
     if not is_owner(interaction.user.id):
-        await interaction.response.send_message("Только владелец может удалять админов", ephemeral=True)
-        return
-
+        if russian:
+            await interaction.response.send_message("Только владелец может удалять админов", ephemeral=True) 
+            return
+        else:
+            await interaction.response.send_message("Only owner can remove admins", ephemeral=True) 
+            return
     if user.id not in admin_users:
-        await interaction.response.send_message("Его нет в списке", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Его нет в списке", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("He is not in the list", ephemeral=True)
+            return
 
     admin_users.remove(user.id)
     save_users(admin_users, ADMIN_FILE)
 
-    await interaction.response.send_message(f"<@{user.id}> удалён из админов", ephemeral=False)
+    if russian:
+        await interaction.response.send_message(f"<@{user.id}> удалён из админов", ephemeral=False)
+    else:
+        await interaction.response.send_message(f"<@{user.id}> is not admin anymore", ephemeral=False)
 
 
-@bot.tree.command(name="listadmin", description="Показать список администраторов")
+@bot.tree.command(name="listadmin", description="Show admnis list")
 async def listadmin_command(interaction: discord.Interaction):
 
     if not is_allowed(interaction.user.id):
-        await interaction.response.send_message("Нет доступа", ephemeral=True)
-        return
+        if russian:
+            await interaction.response.send_message("Нет доступа", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Access denied", ephemeral=True)
+            return
 
     if not admin_users:
-        await interaction.response.send_message(
-            "Список админов пуст\nКоманды владельца: /addadmin, /removeadmin",
-            ephemeral=True
-        )
-        return
+        if russian:
+            await interaction.response.send_message("Список админов пуст", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("Admin list is empty", ephemeral=True)
+            return
 
     users = "\n".join([f"<@{uid}>" for uid in admin_users])
 
-    await interaction.response.send_message(
-        f"Администраторы:\n{users}",
-        ephemeral=True
-    )
+    if russian:
+        await interaction.response.send_message(f"Администраторы:\n{users}", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"Admins:\n{users}", ephemeral=True)
 
 
 @bot.tree.command(name="help", description="Показать доступные команды")
 async def help_command(interaction: discord.Interaction):
 
-    if is_owner(interaction.user.id):
+    if russian:
+        if is_owner(interaction.user.id):
 
-        help_msg = """
+            help_msg = """
 **Команды для всех пользователей:**
  - `/run [server_name]` - Запустить сервер
  - `/status` - Проверить статус сервера
@@ -267,9 +356,9 @@ async def help_command(interaction: discord.Interaction):
  - Автор бота <@1014876512274620469>
 """
 
-    elif is_admin(interaction.user.id):
+        elif is_admin(interaction.user.id):
 
-        help_msg = """
+            help_msg = """
 **Команды для всех пользователей:**
  - `/run [server_name]` - Запустить сервер
  - `/status` - Проверить статус сервера
@@ -283,9 +372,9 @@ async def help_command(interaction: discord.Interaction):
  - Автор бота <@1014876512274620469>
 """
 
-    elif is_allowed(interaction.user.id):
+        elif is_allowed(interaction.user.id):
 
-        help_msg = """
+            help_msg = """
 **Команды для пользователей:**
  - `/run [server_name]` - Запустить сервер
  - `/status` - Проверить статус сервера
@@ -294,9 +383,57 @@ async def help_command(interaction: discord.Interaction):
  - Автор бота <@1014876512274620469>
 """
 
+        else:
+            help_msg = "Нет доступа"
     else:
-        help_msg = "Нет доступа"
+        if is_owner(interaction.user.id):
 
+            help_msg = """
+**Commands for all users:**
+ - `/run [server_name]` - Start a server
+ - `/status` - Check server status
+ - `/list` - Show allowed users
+ - `/listadmin` - Show administrators
+
+**Owner commands:**
+ - `/stop` - Stop the server
+ - `/add` - Add a user
+ - `/remove` - Remove a user
+
+**Owner-only commands:**
+ - `/addadmin` - Add an administrator
+ - `/removeadmin` - Remove an administrator
+ - Bot author <@1014876512274620469>
+"""
+
+        elif is_admin(interaction.user.id):
+
+            help_msg = """
+**Commands for all users:**
+ - `/run [server_name]` - Start a server
+ - `/status` - Check server status
+ - `/list` - Show allowed users
+ - `/listadmin` - Show administrators
+
+**Administrator commands:**
+ - `/stop` - Stop the server
+ - `/add` - Add a user
+ - `/remove` - Remove a user
+ - Bot author <@1014876512274620469>
+"""
+
+        elif is_allowed(interaction.user.id):
+
+            help_msg = """
+**User commands:**
+ - `/run [server_name]` - Start a server
+ - `/status` - Check server status
+ - `/list` - Show allowed users
+ - `/listadmin` - Show administrators
+ - Bot author <@1014876512274620469>
+"""
+        else:
+            help_msg = "Access denied"
     await interaction.response.send_message(help_msg, ephemeral=True)
 
 bot.run(TOKEN)
