@@ -50,9 +50,8 @@ Example:"server_path": "C:/servers" WARNING: dont use \ intead use /
 
     standard_server – The server that starts when you use /run without specifying a server name.
 Leave this empty if you don't want a default server.
-russian
-true – Bot messages will be in Russian.
-false – Bot messages will be in English.
+
+    russian: true – Bot messages will be in Russian. false – Bot messages will be in English.
 
 4. Start the Bot
 Run the bot.
