@@ -14,14 +14,15 @@ Copy the generated invite link and use it to add the bot to your server.
 2. Prepare Your Minecraft Servers
 Place all of your server folders inside a single directory.
 Example:
-C:\servers\
+
+    C:\servers\
 ├── Server1\
 │   └── start.bat
 
-├── Server2\
+    ├── Server2\
 │   └── start.bat
 
-└── Server3\
+    └── Server3\
     └── start.bat
 
     For every server:
