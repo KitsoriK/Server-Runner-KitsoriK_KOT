@@ -23,11 +23,14 @@ def config():
     return settings
 
 settings = config()
+
 TOKEN = settings["TOKEN"]
 OWNER_ID = settings["OWNER_ID"]
+
 RCON_HOST = settings["RCON_HOST"]
 RCON_PASSWORD = settings["RCON_PASSWORD"]
 RCON_PORT = settings["RCON_PORT"]
+
 server_path = settings["server_path"]
 standard_server = settings["standard_server"]
 russian = settings["russian"]
