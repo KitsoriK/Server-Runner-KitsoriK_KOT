@@ -34,7 +34,6 @@ rcon.port=25575
 It is recommended to keep the RCON port at 25575 unless you have a reason to change it.
 
 3. Configure the Bot
-
 Open config_file.json and edit the following values:
 TOKEN – Your Discord bot token.
 You can get it from the Bot page in the Discord Developer Portal.
@@ -45,7 +44,7 @@ RCON_PORT – Your RCON port (usually 25575).
 RCON_PASSWORD – The same password you set in server.properties.
 server_path – The folder containing all of your Minecraft servers.
 
-Example:
+    Example:
 "server_path": "C:/servers" WARNING: dont use \ intead use / 
 standard_server – The server that starts when you use /run without specifying a server name.
 Leave this empty if you don't want a default server.
