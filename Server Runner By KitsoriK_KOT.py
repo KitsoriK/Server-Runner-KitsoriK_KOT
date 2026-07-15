@@ -34,9 +34,11 @@ RCON_PORT = settings["RCON_PORT"]
 
 server_path = settings["server_path"]
 standard_server = settings["standard_server"]
+russian = settings["russian"]
+
 chanel_id = settings["chanel_id"]
 chanel_cycle = settings["chanel_cycle"]
-russian = settings["russian"]
+chanel_timer = settings["chanel_timer"]
 
 def load_users(file):
     if not os.path.exists(file):
