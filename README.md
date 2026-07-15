@@ -14,7 +14,6 @@ Copy the generated invite link and use it to add the bot to your server.
 2. Prepare Your Minecraft Servers
 Place all of your server folders inside a single directory.
 Example:
-
 C:\servers\
 ├── Server1\
 │   └── start.bat
@@ -25,7 +24,7 @@ C:\servers\
 └── Server3\
     └── start.bat
 
-For every server:
+    For every server:
 Rename the startup script to start.bat (if it isn't already).
 Open server.properties and configure RCON:
 enable-rcon=true
