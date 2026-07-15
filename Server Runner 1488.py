@@ -18,7 +18,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 def config():
     if not os.path.exists(CONFIG_FILE):
         None
-    with open("config.json", "r") as f:
+    with open(CONFIG_FILE, "r") as f:
         settings = json.load(f)
     return settings
 
