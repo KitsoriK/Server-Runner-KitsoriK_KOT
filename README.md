@@ -52,6 +52,7 @@ Leave this empty if you don't want a default server.
 russian
 true – Bot messages will be in Russian.
 false – Bot messages will be in English.
+
 4. Start the Bot
 Run the bot.
 Once it's online, use /help to see all available commands and how to use them.
