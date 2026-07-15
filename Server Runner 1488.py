@@ -20,7 +20,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# --- Загрузка пользователей ---
 def load_users(file):
     if not os.path.exists(file):
         return []
@@ -69,7 +68,6 @@ async def on_ready():
     await bot.tree.sync()
     print(f"Бот запущен как {bot.user}")
 
-# --- Запуск ---
 @bot.tree.command(name="run", description="Запустить сервер")
 async def run(interaction: discord.Interaction, server_name: str = ""):
     if not is_allowed(interaction.user.id):
@@ -112,7 +110,6 @@ async def status_command(interaction: discord.Interaction):
         await interaction.response.send_message("🔴 Все сервера остановлены", ephemeral=True)
 
 
-# --- Остановка ---
 @bot.tree.command(name="stop", description="Остановить сервер")
 async def stop_command(interaction: discord.Interaction):
     if not is_admin(interaction.user.id):
@@ -125,7 +122,6 @@ async def stop_command(interaction: discord.Interaction):
         mcr.command("stop")
 
 
-# --- Добавление пользователя ---
 @bot.tree.command(name="add", description="Добавить пользователя")
 async def add_command(interaction: discord.Interaction, user: discord.User):
 
@@ -143,7 +139,6 @@ async def add_command(interaction: discord.Interaction, user: discord.User):
     await interaction.response.send_message(f"<@{user.id}> добавлен", ephemeral=False)
 
 
-# --- Удаление пользователя ---
 @bot.tree.command(name="remove", description="Удалить пользователя")
 async def remove_command(interaction: discord.Interaction, user: discord.User):
 
@@ -161,7 +156,6 @@ async def remove_command(interaction: discord.Interaction, user: discord.User):
     await interaction.response.send_message(f"<@{user.id}> удалён", ephemeral=False)
 
 
-# --- Список пользователей ---
 @bot.tree.command(name="list", description="Показать разрешённых пользователей")
 async def list_command(interaction: discord.Interaction):
 
@@ -200,7 +194,6 @@ async def addadmin_command(interaction: discord.Interaction, user: discord.User)
     await interaction.response.send_message(f"<@{user.id}> добавлен в админы", ephemeral=False)
 
 
-# --- Удаление админа ---
 @bot.tree.command(name="removeadmin", description="Удалить администратора")
 async def removeadmin_command(interaction: discord.Interaction, user: discord.User):
 
@@ -218,7 +211,6 @@ async def removeadmin_command(interaction: discord.Interaction, user: discord.Us
     await interaction.response.send_message(f"<@{user.id}> удалён из админов", ephemeral=False)
 
 
-# --- Список админов ---
 @bot.tree.command(name="listadmin", description="Показать список администраторов")
 async def listadmin_command(interaction: discord.Interaction):
 
@@ -241,7 +233,6 @@ async def listadmin_command(interaction: discord.Interaction):
     )
 
 
-# --- Помощь ---
 @bot.tree.command(name="help", description="Показать доступные команды")
 async def help_command(interaction: discord.Interaction):
 
@@ -262,7 +253,7 @@ async def help_command(interaction: discord.Interaction):
 **Команды владельца:**
  - `/addadmin` - Добавить администратора
  - `/removeadmin` - Удалить администратора
- - ПРИВЕТ Я(<@1014876512274620469>)
+ - Автор бота <@1014876512274620469>
 """
 
     elif is_admin(interaction.user.id):
@@ -278,6 +269,7 @@ async def help_command(interaction: discord.Interaction):
  - `/stop` - Остановить сервер
  - `/add` - Добавить пользователя
  - `/remove` - Удалить пользователя
+ - Автор бота <@1014876512274620469>
 """
 
     elif is_allowed(interaction.user.id):
@@ -288,6 +280,7 @@ async def help_command(interaction: discord.Interaction):
  - `/status` - Проверить статус сервера
  - `/list` - Показать разрешённых пользователей
  - `/listadmin` - Показать администраторов
+ - Автор бота <@1014876512274620469>
 """
 
     else:
