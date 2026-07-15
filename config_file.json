@@ -3,5 +3,7 @@
     "OWNER_ID" : "1014876512274620469",
     "RCON_HOST" : "127.0.0.1",
     "RCON_PORT" : 25575,
-    "RCON_PASSWORD" : "123456"
+    "RCON_PASSWORD" : "123456",
+    "server_path" : "C:/asriel/servers",
+    "standard_server" : "ntmhbm"
 }

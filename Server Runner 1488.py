@@ -38,6 +38,8 @@ OWNER_ID = settings["OWNER_ID"]
 RCON_HOST = settings["RCON_HOST"]
 RCON_PASSWORD = settings["RCON_PASSWORD"]
 RCON_PORT = settings["RCON_PORT"]
+server_path = settings["server_path"]
+standard_server = settings["standard_server"]
 allowed_users = load_users(ALLOWED_FILE)
 admin_users = load_users(ADMIN_FILE)
 
@@ -83,9 +85,9 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
         return
 
     if server_name:
-        bat_file = rf"C:\asriel\servers\{server_name}\Start.bat"
+        bat_file = rf"{server_path}/{server_name}/Start.bat"
     else:
-        bat_file = r"C:\asriel\servers\ntmhbm\Start.bat"
+        bat_file = rf"{server_path}/{standard_server}/Start.bat"
 
     if not os.path.exists(bat_file):
         await interaction.response.send_message(f"❌ Неизвестный сервер `{server_name}`", ephemeral=False)
@@ -105,7 +107,7 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
         if server_name:
             await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
         else:
-            await interaction.response.send_message("🟢 Запущен сервер `ntmhbm`", ephemeral=False)
+            await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=False)
 
     except Exception as e:
         await interaction.response.send_message(f"Ошибка запуска: {e}", ephemeral=False)
