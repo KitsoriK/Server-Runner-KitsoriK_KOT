@@ -26,12 +26,14 @@ Example:
     └── start.bat
 
     For every server:
-Rename the startup script to start.bat (if it isn't already).
-Open server.properties and configure RCON:
-enable-rcon=true
-rcon.password=your_password
-rcon.port=25575
-It is recommended to keep the RCON port at 25575 unless you have a reason to change it.
+
+    Rename the startup script to start.bat (if it isn't already).
+    
+    Open server.properties and configure RCON:
+    enable-rcon=true
+    rcon.password=your_password
+    rcon.port=25575
+    It is recommended to keep the RCON port at 25575 unless you have a reason to change it.
 
 3. Configure the Bot
 Open config_file.json and edit the following values:
