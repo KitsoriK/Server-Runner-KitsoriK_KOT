@@ -1,0 +1,298 @@
+from asyncio.windows_events import NULL
+from math import e
+import discord
+from discord.ext import commands
+import subprocess
+import json
+import os
+from mcrcon import MCRcon
+
+TOKEN = "MTQ4NDYyMjgwNjQ0MzYyMjUwMw.GAjfp9.JVVCYf09aWUNMN4BKYYMBiRiSpwymHl_C4QfbE"
+OWNER_ID = 1014876512274620469
+SOFIA_FILE = "sofia_allowed_users.json"
+ADMIN_FILE = "admin_users.json"
+
+HOST = "127.0.0.1"
+PORT = 25575
+PASSWORD = "123456"
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix="!", intents=intents)
+
+# --- Загрузка пользователей ---
+def load_users(file):
+    if not os.path.exists(file):
+        return []
+    with open(file, "r") as f:
+        return json.load(f)
+
+def save_users(users, file):
+    with open(file, "w") as f:
+        json.dump(users, f)
+
+sofia_allowed_users = load_users(SOFIA_FILE)
+admin_users = load_users(ADMIN_FILE)
+
+def is_owner(user_id):
+    return user_id == OWNER_ID
+
+def is_admin(user_id):
+    return user_id in admin_users or is_owner(user_id)
+
+def is_allowed(user_id):
+    return user_id in sofia_allowed_users or is_admin(user_id) or is_owner(user_id)
+
+def is_any_server_running():
+    result = subprocess.run(
+        "wmic process where name='java.exe' get CommandLine",
+        capture_output=True,
+        text=True,
+        shell=True
+    )
+
+    cmd = result.stdout.lower()
+
+    keywords = [
+        "minecraft",
+        "forge",
+        "fabric",
+        "neoforge",
+        "server.jar",
+        ".jar"
+    ]
+
+    return any(word in cmd for word in keywords)
+
+@bot.event
+async def on_ready():
+    await bot.tree.sync()
+    print(f"Бот запущен как {bot.user}")
+
+# --- Запуск ---
+@bot.tree.command(name="run", description="Запустить сервер")
+async def run(interaction: discord.Interaction, server_name: str = ""):
+    if not is_allowed(interaction.user.id):
+        await interaction.response.send_message("Нет доступа", ephemeral=False)
+        return
+
+    if server_name:
+        bat_file = rf"C:\asriel\servers\{server_name}\Start.bat"
+    else:
+        bat_file = r"C:\asriel\servers\ntmhbm\Start.bat"
+
+    if not os.path.exists(bat_file):
+        await interaction.response.send_message(f"❌ Неизвестный сервер `{server_name}`", ephemeral=False)
+        return
+
+    if is_any_server_running():
+        await interaction.response.send_message("❌ Уже запущен этот или другой сервер", ephemeral=False)
+        return
+
+    try:
+        subprocess.Popen(
+            f'cmd /c "{bat_file}"',
+            cwd=os.path.dirname(bat_file),
+            creationflags=subprocess.CREATE_NEW_CONSOLE
+        )
+
+        if server_name:
+            await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
+        else:
+            await interaction.response.send_message("🟢 Запущен сервер `ntmhbm`", ephemeral=False)
+
+    except Exception as e:
+        await interaction.response.send_message(f"Ошибка запуска: {e}", ephemeral=False)
+
+@bot.tree.command(name="status", description="Проверить статус сервера")
+async def status_command(interaction: discord.Interaction):
+    if is_any_server_running():
+        await interaction.response.send_message("🟢 Какой-то сервер работает", ephemeral=True)
+    else:
+        await interaction.response.send_message("🔴 Все сервера остановлены", ephemeral=True)
+
+
+# --- Остановка ---
+@bot.tree.command(name="stop", description="Остановить сервер")
+async def stop_command(interaction: discord.Interaction):
+    if not is_admin(interaction.user.id):
+        await interaction.response.send_message("Только админ может останавливать", ephemeral=True)
+        return
+
+    await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
+
+    with MCRcon(HOST, PASSWORD, port=PORT) as mcr:
+        mcr.command("stop")
+
+
+# --- Добавление пользователя ---
+@bot.tree.command(name="add", description="Добавить пользователя")
+async def add_command(interaction: discord.Interaction, user: discord.User):
+
+    if not is_admin(interaction.user.id):
+        await interaction.response.send_message("Только админ может добавлять", ephemeral=True)
+        return
+
+    if user.id in sofia_allowed_users:
+        await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+        return
+
+    sofia_allowed_users.append(user.id)
+    save_users(sofia_allowed_users, SOFIA_FILE)
+
+    await interaction.response.send_message(f"<@{user.id}> добавлен", ephemeral=False)
+
+
+# --- Удаление пользователя ---
+@bot.tree.command(name="remove", description="Удалить пользователя")
+async def remove_command(interaction: discord.Interaction, user: discord.User):
+
+    if not is_owner(interaction.user.id):
+        await interaction.response.send_message("Только владелец может удалять", ephemeral=True)
+        return
+
+    if user.id not in sofia_allowed_users:
+        await interaction.response.send_message("Его нет в списке", ephemeral=True)
+        return
+
+    sofia_allowed_users.remove(user.id)
+    save_users(sofia_allowed_users, SOFIA_FILE)
+
+    await interaction.response.send_message(f"<@{user.id}> удалён", ephemeral=False)
+
+
+# --- Список пользователей ---
+@bot.tree.command(name="list", description="Показать разрешённых пользователей")
+async def list_command(interaction: discord.Interaction):
+
+    if not is_allowed(interaction.user.id):
+        await interaction.response.send_message("Нет доступа", ephemeral=True)
+        return
+
+    if not sofia_allowed_users:
+        await interaction.response.send_message(
+            "Список пуст\nКоманды админа: /add, /remove",
+            ephemeral=True
+        )
+        return
+
+    users = "\n".join([f"<@{uid}>" for uid in sofia_allowed_users])
+
+    await interaction.response.send_message(
+        f"Разрешённые:\n{users}",
+        ephemeral=True
+    )
+
+@bot.tree.command(name="addadmin", description="Добавить администратора")
+async def addadmin_command(interaction: discord.Interaction, user: discord.User):
+
+    if not is_owner(interaction.user.id):
+        await interaction.response.send_message("Только владелец может добавлять админов", ephemeral=True)
+        return
+
+    if user.id in admin_users:
+        await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+        return
+
+    admin_users.append(user.id)
+    save_users(admin_users, ADMIN_FILE)
+
+    await interaction.response.send_message(f"<@{user.id}> добавлен в админы", ephemeral=False)
+
+
+# --- Удаление админа ---
+@bot.tree.command(name="removeadmin", description="Удалить администратора")
+async def removeadmin_command(interaction: discord.Interaction, user: discord.User):
+
+    if not is_owner(interaction.user.id):
+        await interaction.response.send_message("Только владелец может удалять админов", ephemeral=True)
+        return
+
+    if user.id not in admin_users:
+        await interaction.response.send_message("Его нет в списке", ephemeral=True)
+        return
+
+    admin_users.remove(user.id)
+    save_users(admin_users, ADMIN_FILE)
+
+    await interaction.response.send_message(f"<@{user.id}> удалён из админов", ephemeral=False)
+
+
+# --- Список админов ---
+@bot.tree.command(name="listadmin", description="Показать список администраторов")
+async def listadmin_command(interaction: discord.Interaction):
+
+    if not is_allowed(interaction.user.id):
+        await interaction.response.send_message("Нет доступа", ephemeral=True)
+        return
+
+    if not admin_users:
+        await interaction.response.send_message(
+            "Список админов пуст\nКоманды владельца: /addadmin, /removeadmin",
+            ephemeral=True
+        )
+        return
+
+    users = "\n".join([f"<@{uid}>" for uid in admin_users])
+
+    await interaction.response.send_message(
+        f"Администраторы:\n{users}",
+        ephemeral=True
+    )
+
+
+# --- Помощь ---
+@bot.tree.command(name="help", description="Показать доступные команды")
+async def help_command(interaction: discord.Interaction):
+
+    if is_owner(interaction.user.id):
+
+        help_msg = """
+**Команды для всех пользователей:**
+ - `/run [server_name]` - Запустить сервер
+ - `/status` - Проверить статус сервера
+ - `/list` - Показать разрешённых пользователей
+ - `/listadmin` - Показать администраторов
+
+**Команды для администраторов:**
+ - `/stop` - Остановить сервер
+ - `/add` - Добавить пользователя
+ - `/remove` - Удалить пользователя
+
+**Команды владельца:**
+ - `/addadmin` - Добавить администратора
+ - `/removeadmin` - Удалить администратора
+ - ПРИВЕТ Я(<@1014876512274620469>)
+"""
+
+    elif is_admin(interaction.user.id):
+
+        help_msg = """
+**Команды для всех пользователей:**
+ - `/run [server_name]` - Запустить сервер
+ - `/status` - Проверить статус сервера
+ - `/list` - Показать разрешённых пользователей
+ - `/listadmin` - Показать администраторов
+
+**Команды для администраторов:**
+ - `/stop` - Остановить сервер
+ - `/add` - Добавить пользователя
+ - `/remove` - Удалить пользователя
+"""
+
+    elif is_allowed(interaction.user.id):
+
+        help_msg = """
+**Команды для пользователей:**
+ - `/run [server_name]` - Запустить сервер
+ - `/status` - Проверить статус сервера
+ - `/list` - Показать разрешённых пользователей
+ - `/listadmin` - Показать администраторов
+"""
+
+    else:
+        help_msg = "Нет доступа"
+
+    await interaction.response.send_message(help_msg, ephemeral=True)
+
+bot.run(TOKEN)
