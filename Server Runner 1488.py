@@ -9,7 +9,7 @@ from mcrcon import MCRcon
 
 TOKEN = "MTQ4NDYyMjgwNjQ0MzYyMjUwMw.GAjfp9.JVVCYf09aWUNMN4BKYYMBiRiSpwymHl_C4QfbE"
 OWNER_ID = 1014876512274620469
-SOFIA_FILE = "sofia_allowed_users.json"
+ALLOWED_FILE = "allowed_users.json"
 ADMIN_FILE = "admin_users.json"
 
 HOST = "127.0.0.1"
@@ -31,7 +31,7 @@ def save_users(users, file):
     with open(file, "w") as f:
         json.dump(users, f)
 
-sofia_allowed_users = load_users(SOFIA_FILE)
+allowed_users = load_users(ALLOWED_FILE)
 admin_users = load_users(ADMIN_FILE)
 
 def is_owner(user_id):
@@ -41,7 +41,7 @@ def is_admin(user_id):
     return user_id in admin_users or is_owner(user_id)
 
 def is_allowed(user_id):
-    return user_id in sofia_allowed_users or is_admin(user_id) or is_owner(user_id)
+    return user_id in allowed_users or is_admin(user_id) or is_owner(user_id)
 
 def is_any_server_running():
     result = subprocess.run(
@@ -133,12 +133,12 @@ async def add_command(interaction: discord.Interaction, user: discord.User):
         await interaction.response.send_message("Только админ может добавлять", ephemeral=True)
         return
 
-    if user.id in sofia_allowed_users:
+    if user.id in allowed_users:
         await interaction.response.send_message("Уже есть в списке", ephemeral=True)
         return
 
-    sofia_allowed_users.append(user.id)
-    save_users(sofia_allowed_users, SOFIA_FILE)
+    allowed_users.append(user.id)
+    save_users(allowed_users, ALLOWED_FILE)
 
     await interaction.response.send_message(f"<@{user.id}> добавлен", ephemeral=False)
 
@@ -151,12 +151,12 @@ async def remove_command(interaction: discord.Interaction, user: discord.User):
         await interaction.response.send_message("Только владелец может удалять", ephemeral=True)
         return
 
-    if user.id not in sofia_allowed_users:
+    if user.id not in allowed_users:
         await interaction.response.send_message("Его нет в списке", ephemeral=True)
         return
 
-    sofia_allowed_users.remove(user.id)
-    save_users(sofia_allowed_users, SOFIA_FILE)
+    allowed_users.remove(user.id)
+    save_users(allowed_users, ALLOWED_FILE)
 
     await interaction.response.send_message(f"<@{user.id}> удалён", ephemeral=False)
 
@@ -169,14 +169,14 @@ async def list_command(interaction: discord.Interaction):
         await interaction.response.send_message("Нет доступа", ephemeral=True)
         return
 
-    if not sofia_allowed_users:
+    if not allowed_users:
         await interaction.response.send_message(
             "Список пуст\nКоманды админа: /add, /remove",
             ephemeral=True
         )
         return
 
-    users = "\n".join([f"<@{uid}>" for uid in sofia_allowed_users])
+    users = "\n".join([f"<@{uid}>" for uid in allowed_users])
 
     await interaction.response.send_message(
         f"Разрешённые:\n{users}",
