@@ -1,10 +1,10 @@
 {
     "TOKEN" : "your bot token",
     "OWNER_ID" : 123456789,
-    "RCON_HOST" : "your server host",
+    "RCON_HOST" : "127.0.0.1",
     "RCON_PORT" : 25575,
     "RCON_PASSWORD" : "your rcon password",
     "server_path" : "your server path like: C:/servers",
-    "standard_server" : "your standart server like when you type /run not /run myserver what will run, if you dont need it leave it empty",
-    "russian" : true
+    "standard_server" : "your standart server",
+    "russian" : false
 }
