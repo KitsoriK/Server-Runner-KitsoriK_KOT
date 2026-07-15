@@ -2,6 +2,7 @@ from asyncio.windows_events import NULL
 from math import e
 import discord
 from discord.ext import commands
+from discord.ext import tasks
 import subprocess
 import json
 import os
@@ -33,6 +34,8 @@ RCON_PORT = settings["RCON_PORT"]
 
 server_path = settings["server_path"]
 standard_server = settings["standard_server"]
+chanel_id = settings["chanel_id"]
+chanel_cycle = settings["chanel_cycle"]
 russian = settings["russian"]
 
 def load_users(file):
@@ -82,6 +85,21 @@ def is_any_server_running():
 async def on_ready():
     await bot.tree.sync()
     print(f"Bot started like {bot.user}")
+
+@tasks.loop(minutes=30)
+async def send_message():
+    channel = bot.get_channel(chanel_id)
+    if channel and chanel_cycle:
+        if russian:
+            if is_any_server_running():
+                await channel.send("🟢 Какой-то сервер работает", ephemeral=True)
+            else:
+                await channel.send("🔴 Все сервера остановлены", ephemeral=True)
+        else:
+            if is_any_server_running():
+                await channel.send("🟢 Some server is running", ephemeral=True)
+            else:
+                await channel.send("🔴 Every server is running", ephemeral=True)
 
 @bot.tree.command(name="run", description="Start a server")
 async def run(interaction: discord.Interaction, server_name: str = ""):

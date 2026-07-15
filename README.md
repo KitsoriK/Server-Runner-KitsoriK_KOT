@@ -53,6 +53,12 @@ Example:
     standard_server - The server that starts when you use /run without specifying a server name.
     Leave this empty if you don't want a default server.
 
+    if you want the bot to say every N minutes is server running set chanel_cycle - true. 
+    chanel_id - on chanel id where you want the bot to send message. 
+    To get the id enable Developer Mode in Discord, right-click chanel, and choose Copy Chanel ID.
+    chanel_timer set on number of minutes between messages
+
+
     russian - true - Bot messages will be in Russian. false - Bot messages will be in English.
 
 4. Start the Bot
