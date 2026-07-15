@@ -7,18 +7,20 @@ import json
 import os
 from mcrcon import MCRcon
 
-TOKEN = "MTQ4NDYyMjgwNjQ0MzYyMjUwMw.GAjfp9.JVVCYf09aWUNMN4BKYYMBiRiSpwymHl_C4QfbE"
-OWNER_ID = 1014876512274620469
 ALLOWED_FILE = "allowed_users.json"
 ADMIN_FILE = "admin_users.json"
-
-HOST = "127.0.0.1"
-PORT = 25575
-PASSWORD = "123456"
+CONFIG_FILE = "config_file.json"
 
 intents = discord.Intents.default()
 intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
+
+def config():
+    if not os.path.exists(CONFIG_FILE):
+        None
+    with open("config.json", "r") as f:
+        settings = json.load(f)
+    return settings
 
 def load_users(file):
     if not os.path.exists(file):
@@ -30,6 +32,12 @@ def save_users(users, file):
     with open(file, "w") as f:
         json.dump(users, f)
 
+settings = config()
+TOKEN = settings["TOKEN"]
+OWNER_ID = settings["OWNER_ID"]
+RCON_HOST = settings["RCON_HOST"]
+RCON_PASSWORD = settings["RCON_PASSWORD"]
+RCON_PORT = settings["RCON_PORT"]
 allowed_users = load_users(ALLOWED_FILE)
 admin_users = load_users(ADMIN_FILE)
 
@@ -118,7 +126,7 @@ async def stop_command(interaction: discord.Interaction):
 
     await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
 
-    with MCRcon(HOST, PASSWORD, port=PORT) as mcr:
+    with MCRcon(RCON_HOST, RCON_PASSWORD, RCON_PORT=RCON_PORT) as mcr:
         mcr.command("stop")
 
 
