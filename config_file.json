@@ -6,5 +6,5 @@
     "RCON_PASSWORD" : "123456",
     "server_path" : "C:/asriel/servers",
     "standard_server" : "ntmhbm",
-    "russian" : false
+    "russian" : true
 }
