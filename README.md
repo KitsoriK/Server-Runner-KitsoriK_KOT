@@ -28,7 +28,7 @@ Example:
     For every server:
 
     Rename the startup script to start.bat (if it isn't already).
-    
+
     Open server.properties and configure RCON:
     enable-rcon=true
     rcon.password=your_password
@@ -44,11 +44,11 @@ Enable Developer Mode in Discord, right-click your profile, and choose Copy User
 RCON_HOST – Usually 127.0.0.1
 RCON_PORT – Your RCON port (usually 25575).
 RCON_PASSWORD – The same password you set in server.properties.
-server_path – The folder containing all of your Minecraft servers.
 
-    Example:
-"server_path": "C:/servers" WARNING: dont use \ intead use / 
-standard_server – The server that starts when you use /run without specifying a server name.
+    server_path – The folder containing all of your Minecraft servers.
+Example:"server_path": "C:/servers" WARNING: dont use \ intead use / 
+
+    standard_server – The server that starts when you use /run without specifying a server name.
 Leave this empty if you don't want a default server.
 russian
 true – Bot messages will be in Russian.
