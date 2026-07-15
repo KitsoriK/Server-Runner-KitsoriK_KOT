@@ -22,6 +22,15 @@ def config():
         settings = json.load(f)
     return settings
 
+settings = config()
+TOKEN = settings["TOKEN"]
+OWNER_ID = settings["OWNER_ID"]
+RCON_HOST = settings["RCON_HOST"]
+RCON_PASSWORD = settings["RCON_PASSWORD"]
+RCON_PORT = settings["RCON_PORT"]
+server_path = settings["server_path"]
+standard_server = settings["standard_server"]
+
 def load_users(file):
     if not os.path.exists(file):
         return []
@@ -32,14 +41,6 @@ def save_users(users, file):
     with open(file, "w") as f:
         json.dump(users, f)
 
-settings = config()
-TOKEN = settings["TOKEN"]
-OWNER_ID = settings["OWNER_ID"]
-RCON_HOST = settings["RCON_HOST"]
-RCON_PASSWORD = settings["RCON_PASSWORD"]
-RCON_PORT = settings["RCON_PORT"]
-server_path = settings["server_path"]
-standard_server = settings["standard_server"]
 allowed_users = load_users(ALLOWED_FILE)
 admin_users = load_users(ADMIN_FILE)
 
@@ -81,7 +82,7 @@ async def on_ready():
 @bot.tree.command(name="run", description="Запустить сервер")
 async def run(interaction: discord.Interaction, server_name: str = ""):
     if not is_allowed(interaction.user.id):
-        await interaction.response.send_message("Нет доступа", ephemeral=False)
+        await interaction.response.send_message("Нет доступа", ephemeral=True)
         return
 
     if server_name:
