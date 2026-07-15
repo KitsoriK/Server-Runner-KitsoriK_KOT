@@ -37,7 +37,6 @@ standard_server = settings["standard_server"]
 russian = settings["russian"]
 
 chanel_id = settings["chanel_id"]
-chanel_cycle = settings["chanel_cycle"]
 chanel_timer = settings["chanel_timer"]
 
 def load_users(file):
@@ -91,7 +90,7 @@ async def on_ready():
 @tasks.loop(minutes=chanel_timer)
 async def send_message():
     channel = bot.get_channel(chanel_id)
-    if channel and chanel_cycle:
+    if channel:
         if russian:
             if is_any_server_running():
                 await channel.send("🟢 Какой-то сервер работает", ephemeral=True)
