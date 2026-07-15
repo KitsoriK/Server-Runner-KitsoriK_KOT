@@ -88,7 +88,7 @@ async def on_ready():
     await bot.tree.sync()
     print(f"Bot started like {bot.user}")
 
-@tasks.loop(minutes=30)
+@tasks.loop(minutes=chanel_timer)
 async def send_message():
     channel = bot.get_channel(chanel_id)
     if channel and chanel_cycle:
