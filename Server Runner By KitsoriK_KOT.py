@@ -176,16 +176,16 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
         else:
             if server_name:
                 if channel:
-                    await channel.send(f"🟢 <@{user_id}> had started '{server_name}'")
-                    await interaction.response.send_message(f"🟢 <@{user_id}> had started '{server_name}'", ephemeral=True)
+                    await channel.send(f"🟢 <@{user_id}> has started '{server_name}'")
+                    await interaction.response.send_message(f"🟢 <@{user_id}> has started '{server_name}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 <@{user_id}> had started '{server_name}'", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 <@{user_id}> has started '{server_name}'", ephemeral=False)
             else:
                 if channel:
-                    await channel.send(f"🟢 <@{user_id}> had started '{standard_server}'")
-                    await interaction.response.send_message(f"🟢 <@{user_id}> had started '{standard_server}'", ephemeral=True)
+                    await channel.send(f"🟢 <@{user_id}> has started '{standard_server}'")
+                    await interaction.response.send_message(f"🟢 <@{user_id}> has started '{standard_server}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 <@{user_id}> had started '{standard_server}'", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 <@{user_id}> has started '{standard_server}'", ephemeral=False)
 
     except Exception as e:
         if russian:
@@ -228,10 +228,10 @@ async def stop_command(interaction: discord.Interaction):
             channel = bot.get_channel(channel_stop_id)
             if russian:
                 if channel:
-                    await channel.send(f"❌ <@'{user_id}'> Остановил сервер!!!")
-                    await interaction.response.send_message(f"❌ <@'{user_id}'> Остановил сервер!!!", ephemeral=True)
+                    await channel.send(f"❌ <@{user_id}> Остановил сервер!!!")
+                    await interaction.response.send_message(f"❌ <@{user_id}> Остановил сервер!!!", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"❌ <@'{user_id}'> Остановил сервер!!!", ephemeral=False)
+                    await interaction.response.send_message(f"❌ <@{user_id}> Остановил сервер!!!", ephemeral=False)
             else:
                 if channel:
                     await channel.send(f"❌ <@{user_id}> Stopped the server!!!")
