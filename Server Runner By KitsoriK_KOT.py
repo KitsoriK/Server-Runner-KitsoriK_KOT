@@ -38,6 +38,7 @@ russian = settings["russian"]
 
 channel_timer_id = settings["channel_timer_id"]
 channel_timer = settings["channel_timer"]
+channel_timer_inactive = settings["channel_timer_inactive"]
 channel_run_id = settings["channel_run_id"]
 channel_stop_id = settings["channel_stop_id"]
 channel_start = settings["start_message"]
@@ -110,13 +111,15 @@ async def check_status_message():
             if is_any_server_running():
                 await channel.send("🟢 Какой-то сервер работает")
             else:
-                await channel.send("🔴 Не один сервер не активен")
+                if channel_timer_inactive:
+                    await channel.send("🔴 Не один сервер не активен")
         else:
             if is_any_server_running():
                 await channel.send("🟢 Some server is running")
             else:
-                await channel.send("🔴 There is no active servers")
-    else:
+                if channel_timer_inactive:
+                    await channel.send("🔴 There is no active servers")
+    else:  
         print("channel dont exist")
 
 @bot.tree.command(name="run", description="Start a server")
