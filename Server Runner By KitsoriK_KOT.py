@@ -85,6 +85,10 @@ def is_any_server_running():
 @bot.event
 async def on_ready():
     await bot.tree.sync()
+
+    if not send_message.is_running():
+        send_message.start()
+
     print(f"Bot started like {bot.user}")
 
 @tasks.loop(minutes=chanel_timer)
@@ -93,14 +97,16 @@ async def send_message():
     if channel:
         if russian:
             if is_any_server_running():
-                await channel.send("🟢 Какой-то сервер работает", ephemeral=True)
+                await channel.send("🟢 Какой-то сервер работает")
             else:
-                await channel.send("🔴 Все сервера остановлены", ephemeral=True)
+                await channel.send("🔴 Все сервера остановлены")
         else:
             if is_any_server_running():
-                await channel.send("🟢 Some server is running", ephemeral=True)
+                await channel.send("🟢 Some server is running")
             else:
-                await channel.send("🔴 Every server is running", ephemeral=True)
+                await channel.send("🔴 Every server is running")
+    else:
+        print("chanel dont exist")
 
 @bot.tree.command(name="run", description="Start a server")
 async def run(interaction: discord.Interaction, server_name: str = ""):

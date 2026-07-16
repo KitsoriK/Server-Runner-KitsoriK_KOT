@@ -6,7 +6,7 @@
     "RCON_PASSWORD" : "your rcon password",
     "server_path" : "your server path like: C:/servers",
     "standard_server" : "your standart server",
-    "chanel_id" : "your chanel id",
+    "chanel_id" : 123456789,
     "chanel_timer" : 30,
     "russian" : false
 }
