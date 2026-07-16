@@ -160,29 +160,29 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
         if russian:
             if server_name:
                 if channel:
-                    await channel.send(f"🟢 Запущен сервер `{server_name}`")
-                    await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=True)
+                    await channel.send(f"🟢 Запущен сервер '{server_name}'")
+                    await interaction.response.send_message(f"🟢 Запущен сервер '{server_name}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 Запущен сервер '{server_name}`", ephemeral=False)
             else:
                 if channel:
-                    await channel.send(f"🟢 Запущен сервер `{server_name}`")
-                    await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=True)
+                    await channel.send(f"🟢 Запущен сервер '{standard_server}'")
+                    await interaction.response.send_message(f"🟢 Запущен сервер '{standard_server}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 Запущен сервер '{standard_server}'", ephemeral=False)
         else:
             if server_name:
                 if channel:
-                    await channel.send(f"🟢 Started server `{server_name}`")
-                    await interaction.response.send_message(f"🟢 Started server `{server_name}`", ephemeral=True)
+                    await channel.send(f"🟢 Started server '{server_name}'")
+                    await interaction.response.send_message(f"🟢 Started server '{server_name}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 Started server `{server_name}`", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 Started server '{server_name}'", ephemeral=False)
             else:
                 if channel:
-                    await channel.send(f"🟢 Started server `{server_name}`")
-                    await interaction.response.send_message(f"🟢 Started server `{standard_server}`", ephemeral=True)
+                    await channel.send(f"🟢 Started server '{standard_server}'")
+                    await interaction.response.send_message(f"🟢 Started server '{standard_server}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 Started server `{standard_server}`", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 Started server '{standard_server}'", ephemeral=False)
 
     except Exception as e:
         if russian:
