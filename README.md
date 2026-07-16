@@ -57,11 +57,13 @@ Example:
     Leave this empty if you don't want a default server.
 
     if you want the bot to say every N minutes is server running do this: 
-    chanel_id - on chanel id where you want the bot to send message. 
+    channel_check_id - on chanel id where you want the bot to send message. 
     To get the id enable Developer Mode in Discord, right-click chanel, and choose Copy Chanel ID.
-    chanel_timer set on number of minutes between messages
-    if you don't set chanel_id - blank
-    if you don't want the bot to sand messages when the server isn't active set channel_timer_inactive to false
+    channel_check_timer set on number of minutes between messages
+    if you don't set channel_check_id - blank
+    if you don't want the bot to sand messages when the server isn't active set channel_check_inactive to false
+
+    if you dont want all this bullshit just use better_channel_check_id set it to channel id and enjoy bot will check is server active every minute and if it is it will say only once untill it will notice server had stopped than he will say but again only once untill the server will be active again
 
     if you want the bot to tell everyone if someone had started the server set channel_run_id to chanel id where you want him to say it.
     if you dont want the bot to tell everyone if someone had started the server set channel_run_id to "".
