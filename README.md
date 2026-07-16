@@ -11,6 +11,8 @@ bot
 applications.commands
 Choose the permissions your bot needs.
 Copy the generated invite link and use it to add the bot to your server.
+
+
 2. Prepare Your Minecraft Servers
 Place all of your server folders inside a single directory.
 Example:
@@ -34,6 +36,7 @@ Example:
     rcon.password=your_password
     rcon.port=25575
     It is recommended to keep the RCON port at 25575 unless you have a reason to change it.
+
 
 3. Configure the Bot
     Open config_file.json and edit the following values:
@@ -67,6 +70,7 @@ Example:
     if you want your bot to say hi when he is started just set start_message tj channel id and channel_start to message you want him say
 
     russian - true - Bot messages will be in Russian. false - Bot messages will be in English.
+    
 
 4. Start the Bot
     Run the bot.
