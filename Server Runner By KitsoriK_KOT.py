@@ -106,7 +106,7 @@ async def send_message():
             if is_any_server_running():
                 await channel.send("🟢 Some server is running")
             else:
-                await channel.send("🔴 Every server is running")
+                await channel.send("🔴 Every server is stopped")
     else:
         print("channel dont exist")
 
@@ -181,7 +181,7 @@ async def status_command(interaction: discord.Interaction):
         if is_any_server_running():
             await interaction.response.send_message("🟢 Some server is running", ephemeral=True)
         else:
-            await interaction.response.send_message("🔴 Every server is running", ephemeral=True)
+            await interaction.response.send_message("🔴 Every server is stopped", ephemeral=True)
 
 
 @bot.tree.command(name="stop", description="Stop a server")
