@@ -36,9 +36,10 @@ server_path = settings["server_path"]
 standard_server = settings["standard_server"]
 russian = settings["russian"]
 
-chanel_timer_id = settings["chanel_timer_id"]
-chanel_timer = settings["chanel_timer"]
-chanel_ping_id = settings["chanel_ping_id"]
+channel_timer_id = settings["channel_timer_id"]
+channel_timer = settings["channel_timer"]
+channel_run_id = settings["channel_run_id"]
+channel_stop_id = settings["channel_stop_id"]
 
 def load_users(file):
     if not os.path.exists(file):
@@ -92,9 +93,9 @@ async def on_ready():
 
     print(f"Bot started like {bot.user}")
 
-@tasks.loop(minutes=chanel_timer)
+@tasks.loop(minutes=channel_timer)
 async def send_message():
-    channel = bot.get_channel(chanel_timer_id)
+    channel = bot.get_channel(channel_timer_id)
     if channel:
         if russian:
             if is_any_server_running():
@@ -107,7 +108,7 @@ async def send_message():
             else:
                 await channel.send("🔴 Every server is running")
     else:
-        print("chanel dont exist")
+        print("channel dont exist")
 
 @bot.tree.command(name="run", description="Start a server")
 async def run(interaction: discord.Interaction, server_name: str = ""):
@@ -146,7 +147,7 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
             cwd=os.path.dirname(bat_file),
             creationflags=subprocess.CREATE_NEW_CONSOLE
         )
-        channel = bot.get_channel(chanel_ping_id)
+        channel = bot.get_channel(channel_run_id)
         if channel:
             if russian:
                 if server_name:
@@ -193,10 +194,14 @@ async def stop_command(interaction: discord.Interaction):
             await interaction.response.send_message("Only admin can stop", ephemeral=True)
             return
 
-    if russian:
-        await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
-    else:
-        await interaction.response.send_message("❌ Stopping!!!", ephemeral=False)
+    channel = bot.get_channel(channel_stop_id)
+    if channel:
+        if russian:
+            await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
+            await channel.send("❌ Остановка сервера!!!")
+        else:
+            await interaction.response.send_message("❌ Stopping!!!", ephemeral=False)
+            await channel.send("❌ Stopping!!!")
 
     with MCRcon(RCON_HOST, RCON_PASSWORD, RCON_PORT=RCON_PORT) as mcr:
         mcr.command("stop")
