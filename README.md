@@ -64,6 +64,8 @@ Example:
     if you want the bot to tell everyone if someone had stopped the server set channel_stop_id to chanel id where you want him to say it.
     if you dont want the bot to tell everyone if someone had stopped the server set channel_stop_id to "".
 
+    if you want your bot to say hi when he is started just set channel_start tj channel id and start_message to message you want him say
+
     russian - true - Bot messages will be in Russian. false - Bot messages will be in English.
 
 4. Start the Bot
