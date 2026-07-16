@@ -390,7 +390,7 @@ async def help_command(interaction: discord.Interaction):
     if russian:
         if is_owner(interaction.user.id):
 
-            help_msg = """
+            help_message = """
 **Команды для всех пользователей:**
  - `/run [server_name]` - Запустить сервер
  - `/status` - Проверить статус сервера
@@ -410,7 +410,7 @@ async def help_command(interaction: discord.Interaction):
 
         elif is_admin(interaction.user.id):
 
-            help_msg = """
+            help_message = """
 **Команды для всех пользователей:**
  - `/run [server_name]` - Запустить сервер
  - `/status` - Проверить статус сервера
@@ -426,7 +426,7 @@ async def help_command(interaction: discord.Interaction):
 
         elif is_allowed(interaction.user.id):
 
-            help_msg = """
+            help_message = """
 **Команды для пользователей:**
  - `/run [server_name]` - Запустить сервер
  - `/status` - Проверить статус сервера
@@ -436,11 +436,11 @@ async def help_command(interaction: discord.Interaction):
 """
 
         else:
-            help_msg = "Нет доступа"
+            help_message = "Нет доступа"
     else:
         if is_owner(interaction.user.id):
 
-            help_msg = """
+            help_message = """
 **Commands for all users:**
  - `/run [server_name]` - Start a server
  - `/status` - Check server status
@@ -460,7 +460,7 @@ async def help_command(interaction: discord.Interaction):
 
         elif is_admin(interaction.user.id):
 
-            help_msg = """
+            help_message = """
 **Commands for all users:**
  - `/run [server_name]` - Start a server
  - `/status` - Check server status
@@ -476,7 +476,7 @@ async def help_command(interaction: discord.Interaction):
 
         elif is_allowed(interaction.user.id):
 
-            help_msg = """
+            help_message = """
 **User commands:**
  - `/run [server_name]` - Start a server
  - `/status` - Check server status
@@ -485,7 +485,7 @@ async def help_command(interaction: discord.Interaction):
  - Bot author <@1014876512274620469>
 """
         else:
-            help_msg = "Access denied"
-    await interaction.response.send_message(help_msg, ephemeral=True)
+            help_message = "Access denied"
+    await interaction.response.send_message(help_message, ephemeral=True)
 
 bot.run(TOKEN)
