@@ -121,6 +121,9 @@ async def check_status_message():
 
 @bot.tree.command(name="run", description="Start a server")
 async def run(interaction: discord.Interaction, server_name: str = ""):
+
+    user_id = interaction.user.id
+
     if not is_allowed(interaction.user.id):
         if russian:
             await interaction.response.send_message("Нет доступа", ephemeral=True)
@@ -160,29 +163,29 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
         if russian:
             if server_name:
                 if channel:
-                    await channel.send(f"🟢 Запущен сервер '{server_name}'")
-                    await interaction.response.send_message(f"🟢 Запущен сервер '{server_name}'", ephemeral=True)
+                    await channel.send(f"🟢 <@{user_id}> Запустил '{server_name}'")
+                    await interaction.response.send_message(f"🟢 <@{user_id}> Запустил '{server_name}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 Запущен сервер '{server_name}`", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 <@{user_id}> Запустил '{server_name}`", ephemeral=False)
             else:
                 if channel:
-                    await channel.send(f"🟢 Запущен сервер '{standard_server}'")
-                    await interaction.response.send_message(f"🟢 Запущен сервер '{standard_server}'", ephemeral=True)
+                    await channel.send(f"🟢 <@{user_id}> Запустил '{standard_server}'")
+                    await interaction.response.send_message(f"🟢 <@{user_id}> Запустил '{standard_server}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 Запущен сервер '{standard_server}'", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 <@{user_id}> Запустил '{standard_server}'", ephemeral=False)
         else:
             if server_name:
                 if channel:
-                    await channel.send(f"🟢 Started server '{server_name}'")
-                    await interaction.response.send_message(f"🟢 Started server '{server_name}'", ephemeral=True)
+                    await channel.send(f"🟢 <@{user_id}> had started '{server_name}'")
+                    await interaction.response.send_message(f"🟢 <@{user_id}> had started '{server_name}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 Started server '{server_name}'", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 <@{user_id}> had started '{server_name}'", ephemeral=False)
             else:
                 if channel:
-                    await channel.send(f"🟢 Started server '{standard_server}'")
-                    await interaction.response.send_message(f"🟢 Started server '{standard_server}'", ephemeral=True)
+                    await channel.send(f"🟢 <@{user_id}> had started '{standard_server}'")
+                    await interaction.response.send_message(f"🟢 <@{user_id}> had started '{standard_server}'", ephemeral=True)
                 else:
-                    await interaction.response.send_message(f"🟢 Started server '{standard_server}'", ephemeral=False)
+                    await interaction.response.send_message(f"🟢 <@{user_id}> had started '{standard_server}'", ephemeral=False)
 
     except Exception as e:
         if russian:
@@ -206,6 +209,9 @@ async def status_command(interaction: discord.Interaction):
 
 @bot.tree.command(name="stop", description="Stop a server")
 async def stop_command(interaction: discord.Interaction):
+
+    user_id = interaction.user.id
+
     if not is_admin(interaction.user.id):
         if russian:
             await interaction.response.send_message("Только админ может останавливать", ephemeral=True)
@@ -222,16 +228,16 @@ async def stop_command(interaction: discord.Interaction):
             channel = bot.get_channel(channel_stop_id)
             if russian:
                 if channel:
-                    await channel.send("❌ Остановка сервера!!!")
-                    await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=True)
+                    await channel.send(f"❌ <@'{user_id}'> Остановил сервер!!!")
+                    await interaction.response.send_message(f"❌ <@'{user_id}'> Остановил сервер!!!", ephemeral=True)
                 else:
-                    await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
+                    await interaction.response.send_message(f"❌ <@'{user_id}'> Остановил сервер!!!", ephemeral=False)
             else:
                 if channel:
-                    await channel.send("❌ Stopping!!!")
-                    await interaction.response.send_message("❌ Stopping!!!", ephemeral=True)
+                    await channel.send(f"❌ <@{user_id}> Stopped the server!!!")
+                    await interaction.response.send_message(f"❌ <@{user_id}> Stopped the server!!!", ephemeral=True)
                 else:
-                    await interaction.response.send_message("❌ Stopping!!!", ephemeral=False)
+                    await interaction.response.send_message(f"❌ <@{user_id}> Stopped the server!!!", ephemeral=False)
     
         except Exception as e:
             if russian:
