@@ -58,6 +58,11 @@ Example:
     To get the id enable Developer Mode in Discord, right-click chanel, and choose Copy Chanel ID.
     chanel_timer set on number of minutes between messages
 
+    if you want the bot to tell everyone if someone had started the server set channel_run_id to chanel id where you want him to say it.
+    if you dont want the bot to tell everyone if someone had started the server set channel_run_id to "".
+    
+    if you want the bot to tell everyone if someone had stopped the server set channel_stop_id to chanel id where you want him to say it.
+    if you dont want the bot to tell everyone if someone had stopped the server set channel_stop_id to "".
 
     russian - true - Bot messages will be in Russian. false - Bot messages will be in English.
 
