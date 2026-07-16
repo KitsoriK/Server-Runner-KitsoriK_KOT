@@ -36,8 +36,9 @@ server_path = settings["server_path"]
 standard_server = settings["standard_server"]
 russian = settings["russian"]
 
-chanel_id = settings["chanel_id"]
+chanel_timer_id = settings["chanel_timer_id"]
 chanel_timer = settings["chanel_timer"]
+chanel_ping_id = settings["chanel_ping_id"]
 
 def load_users(file):
     if not os.path.exists(file):
@@ -93,7 +94,7 @@ async def on_ready():
 
 @tasks.loop(minutes=chanel_timer)
 async def send_message():
-    channel = bot.get_channel(chanel_id)
+    channel = bot.get_channel(chanel_timer_id)
     if channel:
         if russian:
             if is_any_server_running():
@@ -145,17 +146,22 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
             cwd=os.path.dirname(bat_file),
             creationflags=subprocess.CREATE_NEW_CONSOLE
         )
-
-        if russian:
-            if server_name:
-                await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
+        channel = bot.get_channel(chanel_ping_id)
+        if channel:
+            if russian:
+                if server_name:
+                    await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
+                    await channel.send(f"🟢 Запущен сервер `{server_name}`")
+                else:
+                    await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=False)
+                    await channel.send(f"🟢 Запущен сервер `{standard_server}`")
             else:
-                await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=False)
-        else:
-            if server_name:
-                await interaction.response.send_message(f"🟢 Started server `{server_name}`", ephemeral=False)
-            else:
-                await interaction.response.send_message(f"🟢 Started server `{standard_server}`", ephemeral=False)
+                if server_name:
+                    await interaction.response.send_message(f"🟢 Started server `{server_name}`", ephemeral=False)
+                    await channel.send(f"🟢 Started server `{server_name}`")
+                else:
+                    await interaction.response.send_message(f"🟢 Started server `{standard_server}`", ephemeral=False)
+                    await channel.send(f"🟢 Started server `{standard_server}`")
 
     except Exception as e:
         if russian:
