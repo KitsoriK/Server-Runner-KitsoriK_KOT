@@ -19,7 +19,7 @@ bot = commands.Bot(command_prefix="!", intents=intents)
 def config():
     if not os.path.exists(CONFIG_FILE):
         None
-    with open(CONFIG_FILE, "r") as f:
+    with open(CONFIG_FILE, "r", encoding="utf-8") as f:
         settings = json.load(f)
     return settings
 
@@ -90,7 +90,7 @@ def is_any_server_running():
 async def on_ready():
     await bot.tree.sync()
 
-    start_message()
+    await start_message()
 
     if not check_status_message.is_running():
         check_status_message.start()
