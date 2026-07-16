@@ -186,9 +186,9 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
 
     except Exception as e:
         if russian:
-            await interaction.response.send_message(f"Ошибка запуска: {e}", ephemeral=False)
+            await interaction.response.send_message(f"Ошибка запуска: {e}", ephemeral=True)
         else:
-            await interaction.response.send_message(f"Starting error: {e}", ephemeral=False)
+            await interaction.response.send_message(f"Starting error: {e}", ephemeral=True)
 
 @bot.tree.command(name="status", description="Check server status")
 async def status_command(interaction: discord.Interaction):
@@ -213,19 +213,39 @@ async def stop_command(interaction: discord.Interaction):
         else:
             await interaction.response.send_message("Only admin can stop", ephemeral=True)
             return
+    
+    if is_any_server_running:
+        if russian:
+            await interaction.response.send_message("🔴 Не один сервер не активен", ephemeral=True)
+            return
+        else:
+            await interaction.response.send_message("🔴 There is no active servers", ephemeral=True)
+            return
 
-    channel = bot.get_channel(channel_stop_id)
-    if russian:
-        await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
-        if channel:
-            await channel.send("❌ Остановка сервера!!!")
-    else:
-        await interaction.response.send_message("❌ Stopping!!!", ephemeral=False)
-        if channel:
-            await channel.send("❌ Stopping!!!")
+    try:
+        with MCRcon(RCON_HOST, RCON_PASSWORD, port=RCON_PORT) as mcr:
+            mcr.command("stop")
 
-    with MCRcon(RCON_HOST, RCON_PASSWORD, port=RCON_PORT) as mcr:
-        mcr.command("stop")
+        channel = bot.get_channel(channel_stop_id)
+        if russian:
+            if channel:
+                await channel.send("❌ Остановка сервера!!!")
+                await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=True)
+            else:
+                await interaction.response.send_message("❌ Остановка сервера!!!", ephemeral=False)
+        else:
+            if channel:
+                await channel.send("❌ Stopping!!!")
+                await interaction.response.send_message("❌ Stopping!!!", ephemeral=True)
+            else:
+                await interaction.response.send_message("❌ Stopping!!!", ephemeral=False)
+    
+    except Exception as e:
+        if russian:
+            await interaction.response.send_message(f"Ошибка запуска: {e}", ephemeral=True)
+        else:
+            await interaction.response.send_message(f"Starting error: {e}", ephemeral=True)
+
 
 
 @bot.tree.command(name="add", description="Add user")
