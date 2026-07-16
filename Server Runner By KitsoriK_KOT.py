@@ -136,18 +136,18 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
 
     if not os.path.exists(bat_file):
         if russian:
-            await interaction.response.send_message(f"❌ Неизвестный сервер `{server_name}`", ephemeral=False)
+            await interaction.response.send_message(f"❌ Неизвестный сервер `{server_name}`", ephemeral=True)
             return
         else:
-            await interaction.response.send_message(f"❌ Unknown server `{server_name}`", ephemeral=False)
+            await interaction.response.send_message(f"❌ Unknown server `{server_name}`", ephemeral=True)
             return
 
     if is_any_server_running():
         if russian:
-            await interaction.response.send_message("❌ Уже запущен этот или другой сервер", ephemeral=False)
+            await interaction.response.send_message("❌ Уже запущен этот или другой сервер", ephemeral=True)
             return
         else:
-            await interaction.response.send_message("❌ Some server is already running", ephemeral=False)
+            await interaction.response.send_message("❌ Some server is already running", ephemeral=True)
             return
 
     try:
@@ -159,22 +159,30 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
         channel = bot.get_channel(channel_run_id)
         if russian:
             if server_name:
-                await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
                 if channel:
                     await channel.send(f"🟢 Запущен сервер `{server_name}`")
+                    await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=True)
+                else:
+                    await interaction.response.send_message(f"🟢 Запущен сервер `{server_name}`", ephemeral=False)
             else:
-                await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=False)
                 if channel:
-                    await channel.send(f"🟢 Запущен сервер `{standard_server}`")
+                    await channel.send(f"🟢 Запущен сервер `{server_name}`")
+                    await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=True)
+                else:
+                    await interaction.response.send_message(f"🟢 Запущен сервер `{standard_server}`", ephemeral=False)
         else:
             if server_name:
-                await interaction.response.send_message(f"🟢 Started server `{server_name}`", ephemeral=False)
                 if channel:
                     await channel.send(f"🟢 Started server `{server_name}`")
+                    await interaction.response.send_message(f"🟢 Started server `{server_name}`", ephemeral=True)
+                else:
+                    await interaction.response.send_message(f"🟢 Started server `{server_name}`", ephemeral=False)
             else:
-                await interaction.response.send_message(f"🟢 Started server `{standard_server}`", ephemeral=False)
                 if channel:
-                    await channel.send(f"🟢 Started server `{standard_server}`")
+                    await channel.send(f"🟢 Started server `{server_name}`")
+                    await interaction.response.send_message(f"🟢 Started server `{standard_server}`", ephemeral=True)
+                else:
+                    await interaction.response.send_message(f"🟢 Started server `{standard_server}`", ephemeral=False)
 
     except Exception as e:
         if russian:
