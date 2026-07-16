@@ -40,6 +40,8 @@ channel_timer_id = settings["channel_timer_id"]
 channel_timer = settings["channel_timer"]
 channel_run_id = settings["channel_run_id"]
 channel_stop_id = settings["channel_stop_id"]
+channel_start = settings["channel_start"]
+start_message_cfg = settings["start_message"]
 
 def load_users(file):
     if not os.path.exists(file):
@@ -88,13 +90,20 @@ def is_any_server_running():
 async def on_ready():
     await bot.tree.sync()
 
-    if not send_message.is_running():
-        send_message.start()
+    start_message()
+
+    if not check_status_message.is_running():
+        check_status_message.start()
 
     print(f"Bot started like {bot.user}")
 
+async def start_message():
+    channel = bot.get_channel(channel_start)
+    if channel:
+        await channel.send(start_message_cfg)
+
 @tasks.loop(minutes=channel_timer)
-async def send_message():
+async def check_status_message():
     channel = bot.get_channel(channel_timer_id)
     if channel:
         if russian:

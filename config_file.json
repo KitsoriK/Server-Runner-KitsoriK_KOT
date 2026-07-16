@@ -6,6 +6,8 @@
     "RCON_PASSWORD" : "your rcon password",
     "server_path" : "your server path like: C:/servers",
     "standard_server" : "your standart server",
+    "channel_start" : "",
+    "start_message" : "hi i was started",
     "channel_timer" : 30,
     "channel_timer_id" : "",
     "channel_run_id" : "",
