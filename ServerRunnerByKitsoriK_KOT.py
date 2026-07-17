@@ -326,9 +326,9 @@ async def add_command(interaction: discord.Interaction, user: discord.User | Non
         allowed_roles.append(role.id)
         save_users(allowed_roles, ALLOWED_ROLES_FILE)
         if russian:
-            await interaction.response.send_message(f"Роль <@{role.id}> добавлена", ephemeral=False)
+            await interaction.response.send_message(f"Роль <@&{role.id}> добавлена", ephemeral=False)
         else:
-            await interaction.response.send_message(f"Role <@{role.id}> added", ephemeral=False)
+            await interaction.response.send_message(f"Role <@&{role.id}> added", ephemeral=False)
 
 
 
@@ -379,9 +379,9 @@ async def remove_command(interaction: discord.Interaction, user: discord.User | 
         allowed_roles.remove(role.id)
         save_users(allowed_roles, ALLOWED_ROLES_FILE)
         if russian:
-            await interaction.response.send_message(f"Роль <@{role.id}> удалена", ephemeral=False)
+            await interaction.response.send_message(f"Роль <@&{role.id}> удалена", ephemeral=False)
         else:
-            await interaction.response.send_message(f"Role <@{role.id}> removed", ephemeral=False)
+            await interaction.response.send_message(f"Role <@&{role.id}> removed", ephemeral=False)
 
 
 @bot.tree.command(name="list", description="Show allowed users and roles")
@@ -458,9 +458,9 @@ async def addadmin_command(interaction: discord.Interaction, user: discord.User 
         admin_roles.append(role.id)
         save_users(admin_roles, ADMIN_ROLES_FILE)
         if russian:
-            await interaction.response.send_message(f"Роль <@{role.id}> добавлена в админы", ephemeral=False)
+            await interaction.response.send_message(f"Роль <@&{role.id}> добавлена в админы", ephemeral=False)
         else:
-            await interaction.response.send_message(f"Role <@{role.id}> was added to admins", ephemeral=False)
+            await interaction.response.send_message(f"Role <@&{role.id}> was added to admins", ephemeral=False)
 
 
 @bot.tree.command(name="removeadmin", description="Remove admin")
@@ -510,9 +510,9 @@ async def removeadmin_command(interaction: discord.Interaction, user: discord.Us
         admin_roles.remove(role.id)
         save_users(admin_roles, ADMIN_ROLES_FILE)
         if russian:
-            await interaction.response.send_message(f"Роль <@{role.id}> удалёна из админов", ephemeral=False)
+            await interaction.response.send_message(f"Роль <@&{role.id}> удалёна из админов", ephemeral=False)
         else:
-            await interaction.response.send_message(f"Role <@{role.id}> is not admin anymore", ephemeral=False)
+            await interaction.response.send_message(f"Role <@&{role.id}> is not admin anymore", ephemeral=False)
 
 
 @bot.tree.command(name="listadmin", description="Show admnis list")
