@@ -41,6 +41,7 @@ channel_run_id = settings["channel_run_id"]
 channel_stop_id = settings["channel_stop_id"]
 channel_start = settings["start_message"]
 channel_start_cfg = settings["channel_start"]
+last_server_check = None
 
 def load_users(file):
     if not os.path.exists(file):
@@ -103,27 +104,32 @@ async def start_message():
 
 @tasks.loop(seconds=60)
 async def check_message():
+    global last_server_check
+    
     channel = bot.get_channel(channel_check_id)
-    last_server_check = False
+
     if channel:
         if russian:
             if is_any_server_running():
-                if not last_server_check:
+                if last_server_check == False or last_server_check == None:
                     await channel.send("🟢 Какой-то сервер работает")
                     last_server_check = True
             else:
-                if last_server_check:
+                if last_server_check == True or last_server_check == None:
                     await channel.send("🔴 Не один сервер не активен")
                     last_server_check = False
         else:
             if is_any_server_running():
-                if not last_server_check:
+                if last_server_check == False or last_server_check == None:
                     await channel.send("🟢 Some server is running")
                     last_server_check = True
             else:
-                if last_server_check:
+                if last_server_check == True or last_server_check == None:
                     await channel.send("🔴 There is no active servers")
                     last_server_check = False
+                    
+        print(last_server_check)
+
     else:  
         print("channel dont exist")
 
