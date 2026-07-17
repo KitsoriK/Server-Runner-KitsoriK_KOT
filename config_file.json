@@ -8,10 +8,7 @@
     "standard_server" : "your standart server",
     "channel_start" : 123456789,
     "start_message" : "hi i was started",
-    "channel_check_timer" : 30,
     "channel_check_id" : 123456789,
-    "channel_check_inactive" : false,
-    "better_channel_check_id" : 123456789,
     "channel_run_id" : 123456789,
     "channel_stop_id" : 123456789,
     "russian" : false

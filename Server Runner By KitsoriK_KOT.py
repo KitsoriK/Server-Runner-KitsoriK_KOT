@@ -36,10 +36,7 @@ server_path = settings["server_path"]
 standard_server = settings["standard_server"]
 russian = settings["russian"]
 
-channel_check_id = settings["channel_timer_id"]
-channel_check_timer = settings["channel_check_timer"]
-channel_check_inactive = settings["channel_check_inactive"]
-better_channel_check_id = settings["better_channel_check_id"]
+channel_check_id = settings["channel_check_id"]
 channel_run_id = settings["channel_run_id"]
 channel_stop_id = settings["channel_stop_id"]
 channel_start = settings["start_message"]
@@ -94,11 +91,8 @@ async def on_ready():
 
     await start_message()
 
-    if not check_status_message.is_running():
-        check_status_message.start()
-
-    if not better_status_message.is_running():
-        better_status_message.start()
+    if not check_message.is_running():
+        check_message.start()
 
     print(f"Bot started like {bot.user}")
 
@@ -107,28 +101,9 @@ async def start_message():
     if channel:
         await channel.send(channel_start_cfg)
 
-@tasks.loop(minutes=channel_check_timer)
-async def check_status_message():
-    channel = bot.get_channel(channel_check_id)
-    if channel:
-        if russian:
-            if is_any_server_running():
-                await channel.send("🟢 Какой-то сервер работает")
-            else:
-                if channel_check_inactive:
-                    await channel.send("🔴 Не один сервер не активен")
-        else:
-            if is_any_server_running():
-                await channel.send("🟢 Some server is running")
-            else:
-                if channel_check_inactive:
-                    await channel.send("🔴 There is no active servers")
-    else:  
-        print("channel dont exist")
-
 @tasks.loop(seconds=60)
-async def better_status_message():
-    channel = bot.get_channel(better_channel_check_id)
+async def check_message():
+    channel = bot.get_channel(channel_check_id)
     last_server_check = False
     if channel:
         if russian:
