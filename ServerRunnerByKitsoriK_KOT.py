@@ -66,11 +66,11 @@ admin_roles = load_users(ADMIN_ROLES_FILE)
 def is_owner(user_id):
     return user_id == OWNER_ID
 
-def is_admin(user_id):
-    return user_id in admin_users or is_owner(user_id)
+def is_admin(user_id, user_roles):
+    return (user_id in admin_users or any(role.id in admin_roles for role in user_roles) or is_owner(user_id))
 
-def is_allowed(user_id):
-    return user_id in allowed_users or is_admin(user_id) or is_owner(user_id)
+def is_allowed(user_id, user_roles):
+    return (user_id in allowed_users or any(role.id in allowed_roles for role in user_roles) or is_admin(user_id, user_roles))
 
 def is_any_server_running():
     result = subprocess.run(
@@ -148,7 +148,7 @@ async def run(interaction: discord.Interaction, server_name: str = ""):
 
     user_id = interaction.user.id
 
-    if not is_allowed(interaction.user.id):
+    if not is_allowed(interaction.user.id, interaction.user.roles):
         if russian:
             await interaction.response.send_message("Нет доступа", ephemeral=True)
             return
@@ -236,7 +236,7 @@ async def stop_command(interaction: discord.Interaction):
 
     user_id = interaction.user.id
 
-    if not is_admin(interaction.user.id):
+    if not is_admin(interaction.user.id, interaction.user.roles):
         if russian:
             await interaction.response.send_message("Только админ может останавливать", ephemeral=True)
             return
@@ -282,7 +282,7 @@ async def stop_command(interaction: discord.Interaction):
 @bot.tree.command(name="add", description="Add user")
 async def add_command(interaction: discord.Interaction, user: discord.User | None = None, role: discord.Role | None = None):
 
-    if not is_admin(interaction.user.id):
+    if not is_admin(interaction.user.id, interaction.user.roles):
         if russian:
             await interaction.response.send_message("Только админ может добавлять", ephemeral=True)
             return
@@ -335,7 +335,7 @@ async def add_command(interaction: discord.Interaction, user: discord.User | Non
 @bot.tree.command(name="remove", description="Remove user")
 async def remove_command(interaction: discord.Interaction, user: discord.User | None = None, role: discord.Role | None = None):
 
-    if not is_admin(interaction.user.id):
+    if not is_admin(interaction.user.id, interaction.user.roles):
         if russian:
             await interaction.response.send_message("Только админ может удалять", ephemeral=True)
             return
@@ -387,7 +387,7 @@ async def remove_command(interaction: discord.Interaction, user: discord.User | 
 @bot.tree.command(name="list", description="Show allowed users and roles")
 async def list_command(interaction: discord.Interaction):
 
-    if not is_allowed(interaction.user.id):
+    if not is_allowed(interaction.user.id, interaction.user.roles):
         if russian:
             await interaction.response.send_message("Нет доступа", ephemeral=True)
             return
@@ -518,7 +518,7 @@ async def removeadmin_command(interaction: discord.Interaction, user: discord.Us
 @bot.tree.command(name="listadmin", description="Show admnis list")
 async def listadmin_command(interaction: discord.Interaction):
 
-    if not is_allowed(interaction.user.id):
+    if not is_allowed(interaction.user.id, interaction.user.roles):
         if russian:
             await interaction.response.send_message("Нет доступа", ephemeral=True)
             return
@@ -567,7 +567,7 @@ async def help_command(interaction: discord.Interaction):
  - Автор бота <@1014876512274620469>
 """
 
-        elif is_admin(interaction.user.id):
+        elif is_admin(interaction.user.id, interaction.user.roles):
 
             help_message = """
 **Команды для всех пользователей:**
@@ -583,7 +583,7 @@ async def help_command(interaction: discord.Interaction):
  - Автор бота <@1014876512274620469>
 """
 
-        elif is_allowed(interaction.user.id):
+        elif is_allowed(interaction.user.id, interaction.user.roles):
 
             help_message = """
 **Команды для пользователей:**
@@ -617,7 +617,7 @@ async def help_command(interaction: discord.Interaction):
  - Bot author <@1014876512274620469>
 """
 
-        elif is_admin(interaction.user.id):
+        elif is_admin(interaction.user.id, interaction.user.roles):
 
             help_message = """
 **Commands for all users:**
@@ -633,7 +633,7 @@ async def help_command(interaction: discord.Interaction):
  - Bot author <@1014876512274620469>
 """
 
-        elif is_allowed(interaction.user.id):
+        elif is_allowed(interaction.user.id, interaction.user.roles):
 
             help_message = """
 **User commands:**
