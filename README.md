@@ -56,6 +56,8 @@ Example:
     standard_server - The server that starts when you use /run without specifying a server name.
     Leave this empty if you don't want a default server.
 
+    if you don't want anyone not admin stop the server set stopping_admin_feature to true if you do want it set it ti false
+
     if you want the bot to check is server active every minute and if it is it will say only once untill it will notice server had stopped than he will say but again only once untill the server will be active again just set channel_check_id set it to channel id and enjoy
 
     if you want the bot to tell everyone if someone had started the server set channel_run_id to chanel id where you want him to say it.

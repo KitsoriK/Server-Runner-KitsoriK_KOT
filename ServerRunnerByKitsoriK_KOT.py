@@ -38,6 +38,7 @@ RCON_PORT = settings["RCON_PORT"]
 
 server_path = settings["server_path"]
 standard_server = settings["standard_server"]
+stopping_admin_feature = settings["stopping_admin_feature"]
 russian = settings["russian"]
 
 channel_check_id = settings["channel_check_id"]
@@ -236,13 +237,22 @@ async def stop_command(interaction: discord.Interaction):
 
     user_id = interaction.user.id
 
-    if not is_admin(interaction.user.id, interaction.user.roles):
-        if russian:
-            await interaction.response.send_message("Только админ может останавливать", ephemeral=True)
-            return
-        else:
-            await interaction.response.send_message("Only admin can stop", ephemeral=True)
-            return
+    if stopping_admin_feature:
+        if not is_admin(interaction.user.id, interaction.user.roles):
+            if russian:
+                await interaction.response.send_message("Только админ может останавливать", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("Only admin can stop", ephemeral=True)
+                return
+    else:
+        if not is_allowed(interaction.user.id, interaction.user.roles):
+            if russian:
+                await interaction.response.send_message("Нет доступа", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("Access denied", ephemeral=True)
+                return
     
     if is_any_server_running:
         try:
