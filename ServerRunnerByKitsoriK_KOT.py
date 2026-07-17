@@ -128,7 +128,10 @@ async def check_message():
                     await channel.send("🔴 There is no active servers")
                     last_server_check = False
                     
-        print(last_server_check)
+        if last_server_check:
+            print("server is active")
+        else:
+            print("server isn't active")
 
     else:  
         print("channel dont exist")
