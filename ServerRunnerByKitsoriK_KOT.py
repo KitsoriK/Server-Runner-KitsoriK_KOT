@@ -8,8 +8,12 @@ import json
 import os
 from mcrcon import MCRcon
 
-ALLOWED_FILE = "allowed_users.json"
-ADMIN_FILE = "admin_users.json"
+ALLOWED_USERS_FILE = "allowed_users.json"
+ADMIN_USERS_FILE = "admin_users.json"
+
+ALLOWED_ROLES_FILE = "allowed_roles.json"
+ADMIN_ROLES_FILE = "admin_roles.json"
+
 CONFIG_FILE = "config_file.json"
 
 intents = discord.Intents.default()
@@ -53,8 +57,11 @@ def save_users(users, file):
     with open(file, "w") as f:
         json.dump(users, f)
 
-allowed_users = load_users(ALLOWED_FILE)
-admin_users = load_users(ADMIN_FILE)
+allowed_users = load_users(ALLOWED_USERS_FILE)
+admin_users = load_users(ADMIN_USERS_FILE)
+
+allowed_roles = load_users(ALLOWED_ROLES_FILE)
+admin_roles = load_users(ADMIN_ROLES_FILE)
 
 def is_owner(user_id):
     return user_id == OWNER_ID
@@ -273,7 +280,7 @@ async def stop_command(interaction: discord.Interaction):
 
 
 @bot.tree.command(name="add", description="Add user")
-async def add_command(interaction: discord.Interaction, user: discord.User):
+async def add_command(interaction: discord.Interaction, user: discord.User | None = None, role: discord.Role | None = None):
 
     if not is_admin(interaction.user.id):
         if russian:
@@ -282,26 +289,51 @@ async def add_command(interaction: discord.Interaction, user: discord.User):
         else:
             await interaction.response.send_message("Only admin can add", ephemeral=True)
             return
-
-    if user.id in allowed_users:
+    
+    if user is None and role is None:
         if russian:
-            await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+            await interaction.response.send_message("Выберите пользователя или роль",ephemeral=True)
             return
         else:
-            await interaction.response.send_message("Already in the list", ephemeral=True)
+            await interaction.response.send_message("Choose a user or a role.",ephemeral=True)
             return
 
-    allowed_users.append(user.id)
-    save_users(allowed_users, ALLOWED_FILE)
+    if user is not None:
+        if user.id in allowed_users:
+            if russian:
+                await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("Already in the list", ephemeral=True)
+                return
+            
+        allowed_users.append(user.id)
+        save_users(allowed_users, ALLOWED_USERS_FILE)
+        if russian:
+            await interaction.response.send_message(f"Пользователь <@{user.id}> добавлен", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"User <@{user.id}> added", ephemeral=False)
+    
+    if role is not None:
+        if role.id in allowed_roles:
+            if russian:
+                await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("Already in the list", ephemeral=True)
+                return
+            
+        allowed_roles.append(role.id)
+        save_users(allowed_roles, ALLOWED_ROLES_FILE)
+        if russian:
+            await interaction.response.send_message(f"Роль <@{role.id}> добавлена", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"Role <@{role.id}> added", ephemeral=False)
 
-    if russian:
-        await interaction.response.send_message(f"<@{user.id}> добавлен", ephemeral=False)
-    else:
-        await interaction.response.send_message(f"<@{user.id}> added", ephemeral=False)
 
 
 @bot.tree.command(name="remove", description="Remove user")
-async def remove_command(interaction: discord.Interaction, user: discord.User):
+async def remove_command(interaction: discord.Interaction, user: discord.User | None = None, role: discord.Role | None = None):
 
     if not is_admin(interaction.user.id):
         if russian:
@@ -311,24 +343,48 @@ async def remove_command(interaction: discord.Interaction, user: discord.User):
             await interaction.response.send_message("Only admin can remove", ephemeral=True)
             return
 
-    if user.id not in allowed_users:
+    if user is None and role is None:
         if russian:
-            await interaction.response.send_message("Его нет в списке", ephemeral=True)
+            await interaction.response.send_message("Выберите пользователя или роль",ephemeral=True)
             return
         else:
-            await interaction.response.send_message("Not in the list", ephemeral=True)
+            await interaction.response.send_message("Choose a user or a role.",ephemeral=True)
             return
 
-    allowed_users.remove(user.id)
-    save_users(allowed_users, ALLOWED_FILE)
+    if user is not None:
+        if user.id not in allowed_users:
+            if russian:
+                await interaction.response.send_message("Его нет в списке", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("Not in the list", ephemeral=True)
+                return
 
-    if russian:
-        await interaction.response.send_message(f"<@{user.id}> удалён", ephemeral=False)
-    else:
-        await interaction.response.send_message(f"<@{user.id}> removed", ephemeral=False)
+        allowed_users.remove(user.id)
+        save_users(allowed_users, ALLOWED_USERS_FILE)
+        if russian:
+            await interaction.response.send_message(f"Пользователь <@{user.id}> удалён", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"User <@{user.id}> removed", ephemeral=False)
+
+    if role is not None:
+        if role.id not in allowed_roles:
+            if russian:
+                await interaction.response.send_message("Её нет в списке", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("Not in the list", ephemeral=True)
+                return
+
+        allowed_roles.remove(role.id)
+        save_users(allowed_roles, ALLOWED_ROLES_FILE)
+        if russian:
+            await interaction.response.send_message(f"Роль <@{role.id}> удалена", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"Role <@{role.id}> removed", ephemeral=False)
 
 
-@bot.tree.command(name="list", description="Show allowed users")
+@bot.tree.command(name="list", description="Show allowed users and roles")
 async def list_command(interaction: discord.Interaction):
 
     if not is_allowed(interaction.user.id):
@@ -348,14 +404,15 @@ async def list_command(interaction: discord.Interaction):
             return
 
     users = "\n".join([f"<@{uid}>" for uid in allowed_users])
+    roles = "\n".join([f"<@{uid}>" for uid in allowed_roles])
 
     if russian:
-        await interaction.response.send_message(f"Разрешённые:\n{users}", ephemeral=True)
+        await interaction.response.send_message(f"Разрешённые:\n{users}\n{roles}", ephemeral=True)
     else:
-        await interaction.response.send_message(f"Allowed:\n{users}", ephemeral=True)
+        await interaction.response.send_message(f"Allowed:\n{users}\n{roles}", ephemeral=True)
 
 @bot.tree.command(name="addadmin", description="Add admin")
-async def addadmin_command(interaction: discord.Interaction, user: discord.User):
+async def addadmin_command(interaction: discord.Interaction, user: discord.User | None = None, role: discord.Role | None = None):
 
     if not is_owner(interaction.user.id):
         if russian:
@@ -365,25 +422,49 @@ async def addadmin_command(interaction: discord.Interaction, user: discord.User)
             await interaction.response.send_message("Only owner can add admins", ephemeral=True)
             return
 
-    if user.id in admin_users:
+    if user is None and role is None:
         if russian:
-            await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+            await interaction.response.send_message("Выберите пользователя или роль",ephemeral=True)
             return
         else:
-            await interaction.response.send_message("Already in the list", ephemeral=True)
+            await interaction.response.send_message("Choose a user or a role.",ephemeral=True)
             return
 
-    admin_users.append(user.id)
-    save_users(admin_users, ADMIN_FILE)
+    if user is not None:
+        if user.id in admin_users:
+            if russian:
+                await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("Already in the list", ephemeral=True)
+                return
 
-    if russian:
-        await interaction.response.send_message(f"<@{user.id}> добавлен в админы", ephemeral=False)
-    else:
-        await interaction.response.send_message(f"<@{user.id}> was added to admins", ephemeral=False)
+        admin_users.append(user.id)
+        save_users(admin_users, ADMIN_USERS_FILE)
+        if russian:
+            await interaction.response.send_message(f"Пользователь <@{user.id}> добавлен в админы", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"User <@{user.id}> was added to admins", ephemeral=False)
+
+    if role is not None:
+        if role.id in admin_roles:
+            if russian:
+                await interaction.response.send_message("Уже есть в списке", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("Already in the list", ephemeral=True)
+                return
+
+        admin_roles.append(role.id)
+        save_users(admin_roles, ADMIN_ROLES_FILE)
+        if russian:
+            await interaction.response.send_message(f"Роль <@{role.id}> добавлена в админы", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"Role <@{role.id}> was added to admins", ephemeral=False)
 
 
 @bot.tree.command(name="removeadmin", description="Remove admin")
-async def removeadmin_command(interaction: discord.Interaction, user: discord.User):
+async def removeadmin_command(interaction: discord.Interaction, user: discord.User | None = None, role: discord.Role | None = None):
 
     if not is_owner(interaction.user.id):
         if russian:
@@ -392,21 +473,46 @@ async def removeadmin_command(interaction: discord.Interaction, user: discord.Us
         else:
             await interaction.response.send_message("Only owner can remove admins", ephemeral=True) 
             return
-    if user.id not in admin_users:
+        
+    if user is None and role is None:
         if russian:
-            await interaction.response.send_message("Его нет в списке", ephemeral=True)
+            await interaction.response.send_message("Выберите пользователя или роль",ephemeral=True)
             return
         else:
-            await interaction.response.send_message("He is not in the list", ephemeral=True)
+            await interaction.response.send_message("Choose a user or a role.",ephemeral=True)
             return
 
-    admin_users.remove(user.id)
-    save_users(admin_users, ADMIN_FILE)
+    if user is not None:
+        if user.id not in admin_users:
+            if russian:
+                await interaction.response.send_message("Его нет в списке", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("He is not in the list", ephemeral=True)
+                return
 
-    if russian:
-        await interaction.response.send_message(f"<@{user.id}> удалён из админов", ephemeral=False)
-    else:
-        await interaction.response.send_message(f"<@{user.id}> is not admin anymore", ephemeral=False)
+        admin_users.remove(user.id)
+        save_users(admin_users, ADMIN_USERS_FILE)
+        if russian:
+            await interaction.response.send_message(f"Пользователь <@{user.id}> удалён из админов", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"User <@{user.id}> is not admin anymore", ephemeral=False)
+
+    if role is not None:
+        if role.id not in admin_roles:
+            if russian:
+                await interaction.response.send_message("Его нет в списке", ephemeral=True)
+                return
+            else:
+                await interaction.response.send_message("He is not in the list", ephemeral=True)
+                return
+
+        admin_roles.remove(role.id)
+        save_users(admin_roles, ADMIN_ROLES_FILE)
+        if russian:
+            await interaction.response.send_message(f"Роль <@{role.id}> удалёна из админов", ephemeral=False)
+        else:
+            await interaction.response.send_message(f"Role <@{role.id}> is not admin anymore", ephemeral=False)
 
 
 @bot.tree.command(name="listadmin", description="Show admnis list")
@@ -429,11 +535,12 @@ async def listadmin_command(interaction: discord.Interaction):
             return
 
     users = "\n".join([f"<@{uid}>" for uid in admin_users])
+    roles = "\n".join([f"<@{uid}>" for uid in admin_roles])
 
     if russian:
-        await interaction.response.send_message(f"Администраторы:\n{users}", ephemeral=True)
+        await interaction.response.send_message(f"Администраторы:\n{users}\n{roles}", ephemeral=True)
     else:
-        await interaction.response.send_message(f"Admins:\n{users}", ephemeral=True)
+        await interaction.response.send_message(f"Admins:\n{users}\n{roles}", ephemeral=True)
 
 
 @bot.tree.command(name="help", description="Показать доступные команды")
