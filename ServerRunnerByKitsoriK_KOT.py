@@ -404,7 +404,7 @@ async def list_command(interaction: discord.Interaction):
             return
 
     users = "\n".join([f"<@{uid}>" for uid in allowed_users])
-    roles = "\n".join([f"<@{uid}>" for uid in allowed_roles])
+    roles = "\n".join([f"<@&{uid}>" for uid in allowed_roles])
 
     if russian:
         await interaction.response.send_message(f"Разрешённые:\n{users}\n{roles}", ephemeral=True)
@@ -535,7 +535,7 @@ async def listadmin_command(interaction: discord.Interaction):
             return
 
     users = "\n".join([f"<@{uid}>" for uid in admin_users])
-    roles = "\n".join([f"<@{uid}>" for uid in admin_roles])
+    roles = "\n".join([f"<@&{uid}>" for uid in admin_roles])
 
     if russian:
         await interaction.response.send_message(f"Администраторы:\n{users}\n{roles}", ephemeral=True)
