@@ -6,6 +6,7 @@ from discord.ext import tasks
 import subprocess
 import json
 import os
+import psutil
 from mcrcon import MCRcon
 
 ALLOWED_USERS_FILE = "allowed_users.json"
@@ -73,26 +74,21 @@ def is_admin(user_id, user_roles):
 def is_allowed(user_id, user_roles):
     return (user_id in allowed_users or any(role.id in allowed_roles for role in user_roles) or is_admin(user_id, user_roles))
 
+def get_running_server():
+    base = os.path.realpath(server_path)
+    for proc in psutil.process_iter(["name", "cwd"]):
+        try:
+            if "java" not in (proc.info["name"] or "").lower():
+                continue
+            cwd = proc.info["cwd"]
+            if cwd and os.path.realpath(cwd).startswith(base + os.sep):
+                return os.path.relpath(cwd, base).split(os.sep)[0]
+        except (psutil.NoSuchProcess, psutil.AccessDenied):
+            continue
+    return None
+
 def is_any_server_running():
-    result = subprocess.run(
-        "wmic process where name='java.exe' get CommandLine",
-        capture_output=True,
-        text=True,
-        shell=True
-    )
-
-    cmd = result.stdout.lower()
-
-    keywords = [
-        "minecraft",
-        "forge",
-        "fabric",
-        "neoforge",
-        "server.jar",
-        ".jar"
-    ]
-
-    return any(word in cmd for word in keywords)
+    return get_running_server() is not None
 
 @bot.event
 async def on_ready():
